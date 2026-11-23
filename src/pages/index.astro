@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const weeks = (await getCollection('weeks')).sort((a, b) => a.data.week - b.data.week);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="Curso de Matemática">
+  <h1 class="text-3xl font-bold mb-2">Curso de Matemática</h1>
+  <p class="text-slate-600 dark:text-slate-400 mb-8">
+    Escolha uma semana na barra lateral para ver aulas, slides, vídeos e exercícios.
+  </p>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    {weeks.map((w) => (
+      <a
+        href={`${base}/semana/${w.id.replace(/\.mdx$/, '')}/`}
+        class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 hover:border-blue-500 hover:shadow-md transition-all"
+      >
+        <span class="text-xs font-semibold uppercase text-blue-600">Semana {w.data.week}</span>
+        <h2 class="mt-1 text-lg font-semibold">{w.data.title}</h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {w.data.lessons.length} aula{w.data.lessons.length !== 1 ? 's' : ''}
+        </p>
+      </a>
+    ))}
+  </div>
+</Layout>

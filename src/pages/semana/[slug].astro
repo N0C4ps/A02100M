@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Lesson from '../../components/Lesson.astro';
+import ResourceLinks from '../../components/ResourceLinks.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const weeks = await getCollection('weeks');
+  return weeks.map((w) => ({
+    params: { slug: w.id.replace(/\.mdx$/, '') },
+    props: { entry: w },
+  }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+---
+
+<Layout title={`Semana ${data.week} — ${data.title}`}>
+  <p class="text-xs font-semibold uppercase text-blue-600">Semana {data.week}</p>
+  <h1 class="text-3xl font-bold mt-1 mb-6">{data.title}</h1>
+
+  <section class="prose prose-slate dark:prose-invert max-w-none mb-8">
+    <Content />
+  </section>
+
+  <h2 class="text-xl font-semibold mb-3">Aulas</h2>
+  <div class="space-y-3 mb-8">
+    {data.lessons.map((lesson, i) => (
+      <Lesson title={lesson.title} resources={lesson.resources} open={i === 0} />
+    ))}
+  </div>
+
+  {data.reforco && (
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-3">Reforço</h2>
+      <Lesson title={data.reforco.title} resources={data.reforco.resources} />
+    </div>
+  )}
+
+  {(data.exercicios || data.questionario) && (
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-3">Prática</h2>
+      <div class="flex flex-wrap gap-3">
+        {data.exercicios && (
+          <a
+            href={data.exercicios}
+            class="rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-medium hover:bg-blue-700 transition-colors"
+          >
+            📘 Exercícios
+          </a>
+        )}
+        {data.questionario && (
+          <a
+            href={data.questionario}
+            class="rounded-lg bg-slate-800 text-white px-4 py-2 text-sm font-medium hover:bg-slate-700 transition-colors"
+          >
+            ❓ Questionário
+          </a>
+        )}
+      </div>
+    </div>
+  )}
+</Layout>

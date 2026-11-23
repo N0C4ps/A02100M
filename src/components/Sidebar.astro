@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+
+const weeks = (await getCollection('weeks')).sort((a, b) => a.data.week - b.data.week);
+const currentPath = Astro.url.pathname;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<aside class="md:w-64 md:shrink-0 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800">
+  <div class="sticky top-0 md:h-screen overflow-y-auto p-4">
+    <a href={`${base}/`} class="block text-lg font-bold text-slate-900 dark:text-white mb-4 px-2">
+      Curso de Matemática
+    </a>
+    <nav>
+      <ul class="space-y-1">
+        {weeks.map((w) => {
+          const href = `${base}/semana/${w.id.replace(/\.mdx$/, '')}/`;
+          const active = currentPath === href;
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={[
+                  'block rounded-md px-3 py-2 text-sm transition-colors',
+                  active
+                    ? 'bg-blue-600 text-white font-medium'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+                ]}
+              >
+                Semana {w.data.week} — {w.data.title}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </div>
+</aside>

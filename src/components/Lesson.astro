@@ -1,0 +1,38 @@
+---
+import ResourceLinks from './ResourceLinks.astro';
+
+interface Resources {
+  audio?: string;
+  notas?: string;
+  slides?: string;
+  pdf?: string;
+  googleSlides?: string;
+  legendas?: string;
+  transcricao?: string;
+  video?: string;
+  shorts?: string;
+}
+
+interface Props {
+  title: string;
+  resources?: Resources;
+  open?: boolean;
+}
+
+const { title, resources, open = false } = Astro.props;
+---
+
+<details
+  open={open}
+  class="group rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 overflow-hidden"
+>
+  <summary
+    class="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-medium text-slate-900 dark:text-white select-none"
+  >
+    <span>{title}</span>
+    <span class="text-slate-400 transition-transform group-open:rotate-180">⌄</span>
+  </summary>
+  <div class="px-4 pb-4">
+    <ResourceLinks resources={resources} />
+  </div>
+</details>
